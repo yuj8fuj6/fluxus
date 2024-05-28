@@ -4,12 +4,9 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
+      <header className="text-2xl">
         <a
-          className="App-link"
+          className="text-2xl text-red-500"
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
