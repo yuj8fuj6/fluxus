@@ -1,21 +1,24 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import Checker from "./pages/Checker";
+import ExportModel from "./pages/ExportModel";
+import ImportModel from "./pages/ImportModel";
+import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
-      <header className="text-2xl">
-        <a
-          className="text-2xl text-red-500"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="index.html" element={<Checker/>}/>
+        <Route path="index.html/export-model" element={<ExportModel/>}/>
+        <Route path="index.html/import-model" element={<ImportModel/>}/>
+        <Route path="*" element={<NotFound/>}/>
+      </Routes>
     </div>
   );
-}
+};
 
 export default App;
