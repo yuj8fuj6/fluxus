@@ -1,8 +1,13 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import Header from "../components/Header";
 
 const Checker = () => {
-  return <div>Checker</div>;
+  return (
+    <div className="w-full h-full overflow-hidden">
+      <Header />
+      <div>Checker Page</div>
+    </div>
+  );
 };
 
 export default Checker;
