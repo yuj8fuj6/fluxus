@@ -6,17 +6,20 @@ import ExportModel from "./pages/ExportModel";
 import ImportModel from "./pages/ImportModel";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import ActionProvider from "./contexts/ActionContext";
 
 const App = () => {
   return (
     <div className="App">
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="index.html" element={<Checker/>}/>
-        <Route path="index.html/export-model" element={<ExportModel/>}/>
-        <Route path="index.html/import-model" element={<ImportModel/>}/>
-        <Route path="*" element={<NotFound/>}/>
-      </Routes>
+      <ActionProvider>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="index.html" element={<Checker />} />
+          <Route path="index.html/export-model" element={<ExportModel />} />
+          <Route path="index.html/import-model" element={<ImportModel />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ActionProvider>
     </div>
   );
 };
