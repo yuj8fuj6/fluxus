@@ -6,12 +6,20 @@ import { useEffect } from "react";
 import { CameraController, SpeckleLoader, Viewer, SelectionExtension, ViewerEvent } from "@speckle/viewer"
 import { getSpeckleCommit } from "../../speckleUtils.js"
 
-const SPECKLE_URL = process.env.SPECKLE_SERVER_URL;
+const SPECKLE_URL = process.env.REACT_APP_SPECKLE_SERVER_URL;
+const APP_NAME = process.env.REACT_APP_SPECKLE_APP_NAME;
 const eg_ifc_project = "98f92419a2";
 const eg_ifc_project_commit = "c8957351b3";
 const eg_object = "https://latest.speckle.dev/streams/c43ac05d04/objects/d807f3888a400dbd814529fafd8ccac0";
 const eg_object2 = "https://app.speckle.systems/streams/09cc5b50c1/objects/9ff7fb45ae779765cbcbb69cb8bd58b6"
 
+function getToken(){
+    let token = localStorage.getItem("TOKEN")?? "";
+    if (token === undefined){
+        return "";
+    }
+    return token;
+}
 async function getExampleProject(){
     const object_url = await getSpeckleCommit(eg_ifc_project, eg_ifc_project_commit);
     return object_url;
@@ -20,6 +28,7 @@ const ModelViewer = () => {
   useEffect(() =>{
     const model_viewer = document.getElementById("model-viewer") as HTMLDivElement;
     const spinner = document.getElementById("spinner") as HTMLDivElement;
+    const token = getToken();
     async function loadViewer(){
       const viewer = new Viewer(model_viewer);
       await viewer.init();
@@ -27,13 +36,13 @@ const ModelViewer = () => {
       viewer.createExtension(SelectionExtension);
       
 
-      // Load IFC Project (160 MB, takes time to load)
-      const project = await getExampleProject();
-      const loader = new SpeckleLoader(viewer.getWorldTree(), project, "");
+      // Load IFC Project (160 MB, takes time to load, and sometimes doesn't load)
+      //const project = await getExampleProject();
+      //const loader = new SpeckleLoader(viewer.getWorldTree(), project, token);
 
       // Load Object
-      // const loader = new SpeckleLoader(viewer.getWorldTree(), eg_object2, "");
-      // await viewer.loadObject(loader, true);
+      const loader = new SpeckleLoader(viewer.getWorldTree(), eg_object2, token);
+      await viewer.loadObject(loader, true);
       
       spinner.setAttribute("hidden", ""); 
       //viewer.on(ViewerEvent.ObjectClicked, (e) => {

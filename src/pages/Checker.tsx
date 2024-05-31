@@ -20,7 +20,7 @@ const Checker = () => {
       if (code) {
         handleExchangeAccessCode(code);
       }
-      fetchUser();
+      //fetchUser();
     }, []);
 
   const { user, serverInfo } = state;
