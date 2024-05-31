@@ -39,3 +39,11 @@ export const streamCommitsQuery = (streamId, itemsPerPage, cursor) => `query {
       }
     }
   }`;
+
+export const commitObjectQuery = (streamId, commitId) => `query{
+    stream(id: "${streamId}"){
+      commit(id: "${commitId}"){
+        referencedObject
+      }
+    }
+  }`;
