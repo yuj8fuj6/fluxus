@@ -28,15 +28,32 @@ export const useAuthActions = () => {
   };
 
   const handleExchangeAccessCode = async (accessCode: string) => {
-    const result = await exchangeAccessCode(accessCode);
-    // Optionally dispatch actions based on result
+    try {
+      const result = await exchangeAccessCode(accessCode);
+      if (result.token) {
+        localStorage.setItem("TOKEN", result.token); // Set token in localStorage
+        localStorage.setItem("REFRESH_TOKEN", result.refreshToken); // Set refresh token if available
+        console.log("Token exchange successful and user is logged in.");
+      }
+    } catch (error) {
+      console.error("Failed to exchange access code:", error);
+    }
   };
 
   const fetchUser = async () => {
-    const json = await getUserData();
-    const data = json.data;
-    dispatch({ type: "SET_USER", payload: data.user });
-    dispatch({ type: "SET_SERVER_INFO", payload: data.serverInfo });
+    try {
+      const json = await getUserData();
+      if (json && json.data) {
+        const { user, serverInfo } = json.data;
+        dispatch({ type: "SET_USER", payload: user });
+        dispatch({ type: "SET_SERVER_INFO", payload: serverInfo });
+        console.log("User and server info fetched and set successfully");
+      } else {
+        console.log("No data received from getUserData:", json);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+    }
   };
 
   const redirectToAuth = () => {
