@@ -7,7 +7,7 @@ export const REFRESH_TOKEN = `${APP_NAME}.RefreshToken`;
 export const CHALLENGE = `${APP_NAME}.Challenge`;
 const APP_ID = process.env.REACT_APP_SPECKLE_APP_ID;
 const APP_SECRET = process.env.REACT_APP_SPECKLE_APP_SECRET;
-
+//console.log(REACT_APP_SPECKLE_APP_NAME);
 // Redirects to the Speckle server authentication page, using a randomly generated challenge.
 export function goToSpeckleAuthPage() {
   // Generate random challenge
@@ -45,7 +45,7 @@ export async function exchangeAccessCode(accessCode) {
   console.log(data);
   if (data.token) {
     // If retrieving the token was successful, remove challenge and set the new token and refresh token
-    localStorage.removeItem(CHALLENGE);
+    //localStorage.removeItem(CHALLENGE);
     localStorage.setItem(TOKEN, data.token);
     localStorage.setItem(REFRESH_TOKEN, data.refreshToken);
   }

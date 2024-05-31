@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useActionContext } from "../contexts/ActionContext";
 import { useAuthActions } from "../hooks/useAuthActions";
 
@@ -9,7 +9,6 @@ const Login = () => {
   const isAuthenticated = state.user !== null;
 
   const { redirectToAuth } = useAuthActions();
-
   return (
     <div className="h-screen flex items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500">
       <div className="bg-white p-8 rounded-lg shadow-lg min-w-[320px]">
