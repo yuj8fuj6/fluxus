@@ -14,9 +14,9 @@ const App = () => {
       <ActionProvider>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="index.html" element={<Checker />} />
-          <Route path="index.html/export-model" element={<ExportModel />} />
-          <Route path="index.html/import-model" element={<ImportModel />} />
+          <Route path="/check" element={<Checker />} />
+          <Route path="/export-model" element={<ExportModel />} />
+          <Route path="/import-model" element={<ImportModel />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ActionProvider>

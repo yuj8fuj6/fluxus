@@ -1,10 +1,12 @@
-import { userInfoQuery, streamSearchQuery, streamCommitsQuery } from "./speckleQueries";
+import { userInfoQuery, streamSearchQuery, streamCommitsQuery, commitObjectQuery } from "./speckleQueries";
 
-export const APP_NAME = process.env.REACT_APP_SPECKLE_NAME;
-export const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+export const APP_NAME = process.env.REACT_APP_SPECKLE_APP_NAME;
+export const SERVER_URL = process.env.REACT_APP_SPECKLE_SERVER_URL;
 export const TOKEN = `${APP_NAME}.AuthToken`;
 export const REFRESH_TOKEN = `${APP_NAME}.RefreshToken`;
 export const CHALLENGE = `${APP_NAME}.Challenge`;
+const APP_ID = process.env.REACT_APP_SPECKLE_APP_ID;
+const APP_SECRET = process.env.REACT_APP_SPECKLE_APP_SECRET;
 
 // Redirects to the Speckle server authentication page, using a randomly generated challenge.
 export function goToSpeckleAuthPage() {
@@ -15,7 +17,7 @@ export function goToSpeckleAuthPage() {
   // Save challenge in localStorage
   localStorage.setItem(CHALLENGE, challenge);
   // Send user to auth page
-  window.location.href = `${SERVER_URL}/authn/verify/${process.env.REACT_APP_SPECKLE_ID}/${challenge}`;
+  window.location.href = `${SERVER_URL}/authn/verify/${APP_ID}/${challenge}`;
 }
 
 // Log out the current user. This removes the token/refreshToken pair.
@@ -34,12 +36,13 @@ export async function exchangeAccessCode(accessCode) {
     },
     body: JSON.stringify({
       accessCode: accessCode,
-      appId: process.env.REACT_APP_SPECKLE_ID,
-      appSecret: process.env.REACT_APP_SPECKLE_SECRET,
+      appId: APP_ID,
+      appSecret: APP_SECRET,
       challenge: localStorage.getItem(CHALLENGE),
     }),
   });
   const data = await response.json();
+  console.log(data);
   if (data.token) {
     // If retrieving the token was successful, remove challenge and set the new token and refresh token
     localStorage.removeItem(CHALLENGE);
@@ -80,3 +83,25 @@ export const searchStreams = (e) => speckleFetch(streamSearchQuery(e));
 // Fetch the stream commits using the streamCommitsQuery
 export const getStreamCommits = (streamId, itemsPerPage, cursor) =>
   speckleFetch(streamCommitsQuery(streamId, itemsPerPage, cursor));
+
+export async function getSpeckleCommit(streamId, commitId){
+
+  let res = await speckleFetch(commitObjectQuery(streamId, commitId));
+  let object_id = res.data.stream.commit.referencedObject;
+  let o_url = `${SERVER_URL}/streams/${streamId}/objects/${object_id}`;
+  return o_url
+  /*
+  if(objectlist.length ==0){return [];}
+  let objurls = [];
+
+  for(let i = 0; i < objectlist.length; i++){
+    let o_url = b_url+"/streams/"+stream_id+"/objects/"+objectlist[i].referencedObject;
+    let options = JSON.stringify({
+      objectUrl: o_url,
+    });
+    objurls.push(options);
+  }
+  console.log(objurls)
+  return objurls
+  */
+}
