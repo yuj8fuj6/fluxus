@@ -1,3 +1,10 @@
+# Fluxus
+Fast IFC Checker + Composer
+
+## Important Info
+- Please make sure your Speckle App allows the following permissions:
+    - `streams:read`, `streams:write`, `profile:read`, `users:read`
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
