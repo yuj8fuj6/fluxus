@@ -9,10 +9,12 @@ import NavBar from "../components/NavBar";
 const Checker = () => {
   const location = useLocation();
   const { state } = useActionContext();
+  const { user, serverInfo } = state;
   const queryParams = new URLSearchParams(location.search);
   const code = queryParams.get("access_code");
 
   const { fetchUser, handleExchangeAccessCode } = useAuthActions();
+  const isAuthenticated = state.user !== null;
 
   useEffect(() => {
     // Check if there's an authorization code in the URL
@@ -27,14 +29,12 @@ const Checker = () => {
     initialize();
   }, [code]);
 
-  const { user, serverInfo } = state;
-
   console.log(serverInfo);
-  console.log(typeof(user));
+  console.log(user);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      <Header name={user?.name}/>
+      <Header name={user?.name} />
       <NavBar />
       <ModelViewer />
     </div>
