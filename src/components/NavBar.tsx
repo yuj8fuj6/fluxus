@@ -1,6 +1,5 @@
 import React from 'react'
-
-import { Button } from "../components/ui/button";
+import { CloudDownload, ListChecks, Repeat } from 'lucide-react';
 
 const NavBar = () => {
   return (
