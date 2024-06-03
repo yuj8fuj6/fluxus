@@ -4,6 +4,7 @@ import { useActionContext } from "../contexts/ActionContext";
 import { useAuthActions } from "../hooks/useAuthActions";
 import { useLocation } from "react-router-dom";
 import ModelViewer from "../components/viewer/Viewer";
+import NavBar from "../components/NavBar";
 
 const Checker = () => {
   const location = useLocation();
@@ -29,11 +30,12 @@ const Checker = () => {
   const { user, serverInfo } = state;
 
   console.log(serverInfo);
-  console.log(user);
+  console.log(typeof(user));
 
   return (
-    <div className="w-full h-full overflow-hidden">
-      <Header />
+    <div className="relative w-full h-full overflow-hidden">
+      <Header name={user?.name}/>
+      <NavBar />
       <ModelViewer />
     </div>
   );

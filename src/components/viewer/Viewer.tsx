@@ -80,7 +80,7 @@ const ModelViewer = () => {
     </div>
 
     {/** Container for Speckle Viewer**/}
-    <div id="model-viewer" className="w-full h-full bg-slate-100">
+    <div id="model-viewer" className="w-full h-full bg-slate-100 fixed z-0">
     </div>
     </>
   );
