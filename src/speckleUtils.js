@@ -42,7 +42,6 @@ export async function exchangeAccessCode(accessCode) {
     }),
   });
   const data = await response.json();
-  console.log(data);
   if (data.token) {
     // If retrieving the token was successful, remove challenge and set the new token and refresh token
     //localStorage.removeItem(CHALLENGE);

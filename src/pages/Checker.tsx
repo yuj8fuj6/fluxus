@@ -8,30 +8,33 @@ import ModelViewer from "../components/viewer/Viewer";
 const Checker = () => {
   const location = useLocation();
   const { state } = useActionContext();
+  const queryParams = new URLSearchParams(location.search);
+  const code = queryParams.get("access_code");
 
-  const { fetchUser, handleExchangeAccessCode } =
-    useAuthActions();
+  const { fetchUser, handleExchangeAccessCode } = useAuthActions();
 
-    useEffect(() => {
-      // Check if there's an authorization code in the URL
-      const queryParams = new URLSearchParams(location.search);
-      const code = queryParams.get("access_code");
-      console.log(code);
+  useEffect(() => {
+    // Check if there's an authorization code in the URL
+    const initialize = async () => {
       if (code) {
-        handleExchangeAccessCode(code);
+        const tokenSet = await handleExchangeAccessCode(code);
+        if (tokenSet) {
+          fetchUser();
+        }
       }
-      fetchUser();
-    }, []);
+    };
+    initialize();
+  }, [code]);
 
   const { user, serverInfo } = state;
 
-  console.log(state);
+  console.log(serverInfo);
   console.log(user);
 
   return (
     <div className="w-full h-full overflow-hidden">
       <Header />
-      <ModelViewer/>
+      <ModelViewer />
     </div>
   );
 };
