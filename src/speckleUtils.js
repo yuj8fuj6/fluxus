@@ -1,4 +1,9 @@
-import { userInfoQuery, streamSearchQuery, streamCommitsQuery, commitObjectQuery } from "./speckleQueries";
+import {
+  userInfoQuery,
+  streamSearchQuery,
+  streamCommitsQuery,
+  commitObjectQuery,
+} from "./speckleQueries";
 
 export const APP_NAME = process.env.REACT_APP_SPECKLE_APP_NAME;
 export const SERVER_URL = process.env.REACT_APP_SPECKLE_SERVER_URL;
@@ -44,7 +49,7 @@ export async function exchangeAccessCode(accessCode) {
   const data = await response.json();
   if (data.token) {
     // If retrieving the token was successful, remove challenge and set the new token and refresh token
-    //localStorage.removeItem(CHALLENGE);
+    localStorage.removeItem(CHALLENGE);
     localStorage.setItem(TOKEN, data.token);
     localStorage.setItem(REFRESH_TOKEN, data.refreshToken);
   }
@@ -83,12 +88,11 @@ export const searchStreams = (e) => speckleFetch(streamSearchQuery(e));
 export const getStreamCommits = (streamId, itemsPerPage, cursor) =>
   speckleFetch(streamCommitsQuery(streamId, itemsPerPage, cursor));
 
-export async function getSpeckleCommit(streamId, commitId){
-
+export async function getSpeckleCommit(streamId, commitId) {
   let res = await speckleFetch(commitObjectQuery(streamId, commitId));
   let object_id = res.data.stream.commit.referencedObject;
   let o_url = `${SERVER_URL}/streams/${streamId}/objects/${object_id}`;
-  return o_url
+  return o_url;
   /*
   if(objectlist.length ==0){return [];}
   let objurls = [];
