@@ -5,6 +5,7 @@ import { useAuthActions } from "../hooks/useAuthActions";
 import { useNavigate } from "react-router-dom";
 import ModelViewer from "../components/viewer/Viewer";
 import NavBar from "../components/NavBar";
+import ModelSearch from "../components/ModelSearch";
 import { TOKEN } from "../speckleUtils";
 
 const ImportModel = () => {
@@ -28,6 +29,7 @@ const ImportModel = () => {
     <div className="relative w-full h-full overflow-hidden">
       <Header name={user?.name} />
       <NavBar />
+      <ModelSearch />
       <ModelViewer />
     </div>
   );

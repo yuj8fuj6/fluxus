@@ -19,7 +19,7 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="absolute mt-8 ml-10 w-26 z-10">
+    <div className="absolute mt-8 ml-10 w-26 z-20">
       <div className="grid grid-cols-1 gap-y-4">
         {routes.map((route) => (
           <div
