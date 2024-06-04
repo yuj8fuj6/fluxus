@@ -29,14 +29,12 @@ export const useAuthActions = () => {
 
   const handleExchangeAccessCode = async (accessCode: string) => {
     try {
-      const result = await exchangeAccessCode(accessCode);
-      if (result.token) {
-        localStorage.setItem("TOKEN", result.token); // Set token in localStorage
-        localStorage.setItem("REFRESH_TOKEN", result.refreshToken); // Set refresh token if available
-        console.log("Token exchange successful and user is logged in.");
-      }
+      await exchangeAccessCode(accessCode);
+      console.log("Token exchange successful and user is logged in.");
+      return true;
     } catch (error) {
       console.error("Failed to exchange access code:", error);
+      return false;
     }
   };
 
