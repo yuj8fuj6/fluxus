@@ -49,7 +49,7 @@ export async function exchangeAccessCode(accessCode) {
   const data = await response.json();
   if (data.token) {
     // If retrieving the token was successful, remove challenge and set the new token and refresh token
-    localStorage.removeItem(CHALLENGE);
+    // localStorage.removeItem(CHALLENGE);
     localStorage.setItem(TOKEN, data.token);
     localStorage.setItem(REFRESH_TOKEN, data.refreshToken);
   }
