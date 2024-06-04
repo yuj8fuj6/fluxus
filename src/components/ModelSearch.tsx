@@ -38,23 +38,31 @@ const ModelSearch = () => {
         debounceTimeout={300}
         onChange={(e) => fetchSearchResults(e.target.value)}
         value={search}
-        className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-black"
+        className="relative flex h-8 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-black"
         placeholder="Search for Speckle Stream here"
       />
       <div>
-        {streams.length > 0 &&
-          streams.map((stream) => (
-            <div
-              key={stream.id}
-              onClick={() => setSelectedSearchResult(stream)}
-            >
-              <div>{stream.name}</div>
-              <div>{stream.id}</div>
-              <div>
-                Updated <time>{stream.updatedAt}</time>
-              </div>
-            </div>
-          ))}
+        {streams.length > 0 && (
+          <ul className="absolute w-full bg-white shadow-md max-h-60 overflow-auto rounded-lg">
+            {streams.map((stream) => (
+              <li
+                key={stream.id}
+                onClick={() => setSelectedSearchResult(stream)}
+                className="p-2 hover:bg-gray-100 cursor-pointer grid grid-cols-6 text-black text-sm"
+              >
+                <div className="col-span-3 flex justify-start font-bold">
+                  {stream.name}
+                </div>
+                <div className="col-span-3 flex justify-end font-bold">
+                  id: {stream.id}
+                </div>
+                <div className="col-span-6 flex justify-start text-xs mb-4">
+                  Updated at {new Date(stream.updatedAt).toLocaleDateString()}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
