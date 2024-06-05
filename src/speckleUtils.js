@@ -3,6 +3,8 @@ import {
   streamSearchQuery,
   streamCommitsQuery,
   commitObjectQuery,
+  streamCommitQuery,
+  commitObjectQueryTrial,
 } from "./speckleQueries";
 
 export const APP_NAME = process.env.REACT_APP_SPECKLE_APP_NAME;
@@ -113,3 +115,17 @@ export async function getSpeckleCommit(streamId, commitId) {
   return objurls
   */
 }
+
+// Trial function to retrieve Speckle commit - to delete later
+export const getSelectedCommit = async (streamId, commitId) => {
+  const res = await speckleFetch(streamCommitQuery(streamId, commitId));
+  const commit = res.data.stream.commit;
+  return commit;
+};
+
+// Trial function to retrieve Speckle object - to delete later
+export const getSelectedObject = async (streamId, objectId) => {
+  const res = await speckleFetch(commitObjectQueryTrial(streamId, objectId));
+  const commit = res.data.stream.commit;
+  return commit;
+};

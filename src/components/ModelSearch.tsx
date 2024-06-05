@@ -31,8 +31,8 @@ const ModelSearch = () => {
   const [selectedCommit, setSelectedCommit] = useState<Commit | null>(null);
   // const [commits, setCommits] = useState<Commit[]>([]);
   const { state, dispatch } = useActionContext();
-  const { currentStream, latestCommits, previousCursors } = state;
-  const { handleStreamSelection } = useAuthActions();
+  const { latestCommits, currentCommit } = state;
+  const { handleStreamSelection, handleCommitSelection } = useAuthActions();
 
   useEffect(() => {
     if (selectedStream) {
@@ -53,7 +53,7 @@ const ModelSearch = () => {
     }
   }, [selectedStream]);
 
-  console.log(selectedCommit);
+  console.log(currentCommit);
 
   return (
     <div className="absolute mt-8 ml-32 w-[32rem] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4 text-[#C71585]">
@@ -101,7 +101,7 @@ const ModelSearch = () => {
           <div className="flex justify-start font-bold mt-4">
             Selected Commit
           </div>
-          <div className="border border-gray-300 p-4 rounded-lg text-xs">
+          <div className="border border-gray-300 p-4 rounded-lg text-xs mt-4">
             {selectedCommit ? (
               <div className="text-black italic grid grid-cols-3">
                 <p className="col-span-1 text-start">id:</p>
@@ -138,7 +138,20 @@ const ModelSearch = () => {
             )}
           </div>
           <div className="flex justify-start mt-4 gap-x-2">
-            <Button size="sm" variant="select" disabled={!selectedCommit}>
+            <Button
+              size="sm"
+              variant="select"
+              disabled={!selectedCommit}
+              onClick={() => {
+                dispatch({ type: "SET_COMMITS", payload: null });
+                if (selectedCommit && selectedStream)
+                  handleCommitSelection(
+                    selectedStream.id,
+                    selectedCommit.id,
+                  );
+                setSelectedCommit(null);
+              }}
+            >
               Load
             </Button>
             <Button
@@ -146,7 +159,7 @@ const ModelSearch = () => {
               variant="select"
               onClick={() => {
                 dispatch({ type: "SET_COMMITS", payload: null });
-                setSelectedCommit(null)
+                setSelectedCommit(null);
               }}
             >
               Clear All

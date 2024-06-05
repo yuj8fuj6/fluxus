@@ -32,6 +32,7 @@ interface AppState {
   latestCommits: Commit[] | null;
   previousCursors: (string | null)[];
   tableOptions: any;
+  currentCommit: Commit | null;
 }
 
 const initialState: AppState = {
@@ -41,6 +42,7 @@ const initialState: AppState = {
   latestCommits: null,
   previousCursors: [null],
   tableOptions: null,
+  currentCommit: null,
 };
 
 type Action = { type: string; payload?: any };
@@ -66,6 +68,8 @@ const appReducer = (state: AppState, action: Action): AppState => {
         ...state,
         previousCursors: [...state.previousCursors, action.payload],
       };
+    case "SET_COMMIT":
+      return { ...state, currentCommit: action.payload };
     default:
       return state;
   }

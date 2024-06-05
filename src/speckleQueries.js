@@ -47,3 +47,39 @@ export const commitObjectQuery = (streamId, commitId) => `query{
       }
     }
   }`;
+
+// Trial Selected Commit Query - to delete later 
+export const streamCommitQuery = (streamId, commitId) => `query{
+    stream(id: "${streamId}"){
+      commit(id: "${commitId}"){
+          id
+          message
+          branchName
+          sourceApplication
+          referencedObject
+          authorName
+          createdAt
+      }
+    }
+  }`;
+
+// Trial Object Query - to delete later
+export const commitObjectQueryTrial = (streamId, objectId) => `query{
+      stream(id:"${streamId}"){
+     	id
+      name
+      object(id:"${objectId}"){
+      id
+      createdAt
+      totalChildrenCount
+      children(limit:5){
+        cursor
+        totalCount
+        objects{
+          id
+          data
+        }
+      }
+    }
+  }     
+  }`;
