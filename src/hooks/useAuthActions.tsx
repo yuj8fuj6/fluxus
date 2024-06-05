@@ -4,8 +4,8 @@ import {
   exchangeAccessCode,
   getStreamCommits,
   speckleLogOut,
+  getSelectedCommit,
 } from "../speckleUtils";
-import { streamCommitsQuery } from "../speckleQueries";
 
 import { useActionContext } from "../contexts/ActionContext";
 
@@ -61,10 +61,13 @@ export const useAuthActions = () => {
   const handleStreamSelection = async (stream: Stream) => {
     dispatch({ type: "SET_CURRENT_STREAM", payload: stream });
     dispatch({ type: "RESET_PREV_CURSORS" });
-    const commitsJson = await getStreamCommits(
-      streamCommitsQuery(stream.id, 5, null),
-    );
-    dispatch({ type: "SET_COMMITS", payload: commitsJson.data.stream.commits });
+    const commitsJson = await getStreamCommits(stream.id, 5, null);
+    dispatch({ type: "SET_COMMITS", payload: commitsJson });
+  };
+
+  const handleCommitSelection = async (streamId: string, commitId: string) => {
+    const commitJson = await getSelectedCommit(streamId, commitId);
+    dispatch({ type: "SET_COMMIT", payload: commitJson });
   };
 
   return {
@@ -73,5 +76,6 @@ export const useAuthActions = () => {
     fetchUser,
     redirectToAuth,
     handleStreamSelection,
+    handleCommitSelection,
   };
 };

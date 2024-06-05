@@ -17,6 +17,7 @@ const buttonVariants = cva(
         logout:
           "border border-[#C71585] bg-background hover:bg-[#C71585] hover:text-white",
         login: "bg-[#C71585] text-primary-foreground hover:bg-[#C71585]/80",
+        select: "bg-[#C71585] text-primary-foreground hover:bg-[#C71585]/80",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
