@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { searchStreams } from "../speckleUtils";
 import { DebounceInput } from "react-debounce-input";
+import { useActionContext } from "../contexts/ActionContext";
+import { useAuthActions } from "../hooks/useAuthActions";
 
 interface Stream {
   id: string;
@@ -11,15 +13,17 @@ interface Stream {
 const ModelSearch = () => {
   const [search, setSearch] = useState<string>("");
   const [streams, setStreams] = useState<Stream[]>([]);
-  const [selectedSearchResult, setSelectedSearchResult] =
-    useState<Stream | null>(null);
+  const [selectedStream, setSelectedStream] = useState<Stream | null>(null);
+  const { state } = useActionContext();
+  const { currentStream, latestCommits, previousCursors } = state;
+  const { handleStreamSelection } = useAuthActions();
 
   useEffect(() => {
-    if (selectedSearchResult) {
+    if (selectedStream) {
       setSearch("");
       setStreams([]);
     }
-  }, [selectedSearchResult]);
+  }, [selectedStream]);
 
   const fetchSearchResults = async (query: string) => {
     if (!query || query.length < 3) return;
@@ -27,7 +31,17 @@ const ModelSearch = () => {
     setStreams(json.data.streams.items);
   };
 
-  console.log(streams);
+  useEffect(() => {
+    console.log(selectedStream)
+    if (selectedStream) {
+      handleStreamSelection(selectedStream);
+    }
+  }, [selectedStream]);
+
+  console.log(selectedStream)
+  console.log(currentStream);
+  console.log(latestCommits);
+  console.log(previousCursors);
 
   return (
     <div className="absolute mt-8 ml-32 w-[32rem] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4 text-[#C71585]">
@@ -43,12 +57,12 @@ const ModelSearch = () => {
       />
       <div>
         {streams.length > 0 && (
-          <ul className="absolute w-full bg-white shadow-md max-h-60 overflow-auto rounded-lg">
+          <ul className="absolute w-full bg-white shadow-md max-h-60 overflow-auto rounded-lg gap-y-4">
             {streams.map((stream) => (
               <li
                 key={stream.id}
-                onClick={() => setSelectedSearchResult(stream)}
-                className="p-2 hover:bg-gray-100 cursor-pointer grid grid-cols-6 text-black text-sm"
+                onClick={() => setSelectedStream(stream)}
+                className="p-4 hover:bg-gray-100 cursor-pointer grid grid-cols-6 text-black text-sm"
               >
                 <div className="col-span-3 flex justify-start font-bold">
                   {stream.name}
@@ -56,7 +70,7 @@ const ModelSearch = () => {
                 <div className="col-span-3 flex justify-end font-bold">
                   id: {stream.id}
                 </div>
-                <div className="col-span-6 flex justify-start text-xs mb-4">
+                <div className="col-span-6 flex justify-start text-xs">
                   Updated at {new Date(stream.updatedAt).toLocaleDateString()}
                 </div>
               </li>

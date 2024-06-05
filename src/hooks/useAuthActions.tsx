@@ -61,9 +61,8 @@ export const useAuthActions = () => {
   const handleStreamSelection = async (stream: Stream) => {
     dispatch({ type: "SET_CURRENT_STREAM", payload: stream });
     dispatch({ type: "RESET_PREV_CURSORS" });
-    const commitsJson = await getStreamCommits(
-      streamCommitsQuery(stream.id, 5, null),
-    );
+    const commitsJson = await getStreamCommits(stream.id, 5, null);
+    console.log(commitsJson.data);
     dispatch({ type: "SET_COMMITS", payload: commitsJson.data.stream.commits });
   };
 
