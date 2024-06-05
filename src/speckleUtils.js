@@ -85,8 +85,13 @@ export const getUserData = () => speckleFetch(userInfoQuery());
 export const searchStreams = (e) => speckleFetch(streamSearchQuery(e));
 
 // Fetch the stream commits using the streamCommitsQuery
-export const getStreamCommits = (streamId, itemsPerPage, cursor) =>
-  speckleFetch(streamCommitsQuery(streamId, itemsPerPage, cursor));
+export const getStreamCommits = async (streamId, itemsPerPage, cursor) => {
+  const res = await speckleFetch(
+    streamCommitsQuery(streamId, itemsPerPage, cursor),
+  );
+  const commits = res.data.stream.commits.items;
+  return commits;
+};
 
 export async function getSpeckleCommit(streamId, commitId) {
   let res = await speckleFetch(commitObjectQuery(streamId, commitId));
