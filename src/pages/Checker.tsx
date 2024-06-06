@@ -5,6 +5,7 @@ import { useAuthActions } from "../hooks/useAuthActions";
 import { useLocation, useNavigate } from "react-router-dom";
 import ModelViewer from "../components/viewer/Viewer";
 import NavBar from "../components/NavBar";
+import ModelChecker from "../components/ModelChecker";
 import { TOKEN } from "../speckleUtils";
 
 const Checker = () => {
@@ -34,15 +35,19 @@ const Checker = () => {
 
   useEffect(() => {
     setToken(localStorage.getItem(TOKEN));
+    if (isAuthenticated) {
+      fetchUser();
+    }
     if (!isAuthenticated) {
       navigate("/");
     }
   }, []);
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative w-full h-full overflow-auto">
       <Header name={user?.name} />
       <NavBar />
+      <ModelChecker />
       <ModelViewer />
     </div>
   );

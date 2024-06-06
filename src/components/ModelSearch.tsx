@@ -7,6 +7,7 @@ import { useAuthActions } from "../hooks/useAuthActions";
 import { columns } from "../components/table-commit/Columns";
 import { DataTable } from "../components/table-commit/DataTable";
 import { Button } from "./ui/button";
+import { useToast } from "../components/ui/use-toast";
 
 interface Stream {
   id: string;
@@ -33,6 +34,7 @@ const ModelSearch = () => {
   const { state, dispatch } = useActionContext();
   const { latestCommits, currentCommit } = state;
   const { handleStreamSelection, handleCommitSelection } = useAuthActions();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (selectedStream) {
@@ -144,11 +146,14 @@ const ModelSearch = () => {
               disabled={!selectedCommit}
               onClick={() => {
                 dispatch({ type: "SET_COMMITS", payload: null });
-                if (selectedCommit && selectedStream)
-                  handleCommitSelection(
-                    selectedStream.id,
-                    selectedCommit.id,
-                  );
+                if (selectedCommit && selectedStream) {
+                  handleCommitSelection(selectedStream.id, selectedCommit.id);
+                  toast({
+                    variant: "success",
+                    title: "Success!",
+                    description: "Speckle commit loaded successfully.",
+                  });
+                }
                 setSelectedCommit(null);
               }}
             >
