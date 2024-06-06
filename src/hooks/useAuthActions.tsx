@@ -5,6 +5,7 @@ import {
   getStreamCommits,
   speckleLogOut,
   getSelectedCommit,
+  getSelectedObject,
 } from "../speckleUtils";
 
 import { useActionContext } from "../contexts/ActionContext";
@@ -70,6 +71,11 @@ export const useAuthActions = () => {
     dispatch({ type: "SET_COMMIT", payload: commitJson });
   };
 
+  const fetchObject = async (streamId: string, objectId: string) => {
+    const objectJson = await getSelectedObject(streamId, objectId);
+    return objectJson
+  };
+
   return {
     logout,
     handleExchangeAccessCode,
@@ -77,5 +83,6 @@ export const useAuthActions = () => {
     redirectToAuth,
     handleStreamSelection,
     handleCommitSelection,
+    fetchObject
   };
 };

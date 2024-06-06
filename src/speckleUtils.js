@@ -12,6 +12,9 @@ export const SERVER_URL = process.env.REACT_APP_SPECKLE_SERVER_URL;
 export const TOKEN = `${APP_NAME}.AuthToken`;
 export const REFRESH_TOKEN = `${APP_NAME}.RefreshToken`;
 export const CHALLENGE = `${APP_NAME}.Challenge`;
+export const STREAM_ID = `${APP_NAME}.StreamId`;
+export const COMMIT_ID = `${APP_NAME}.CommitId`;
+export const OBJECT_ID = `${APP_NAME}.ObjectId`;
 const APP_ID = process.env.REACT_APP_SPECKLE_APP_ID;
 const APP_SECRET = process.env.REACT_APP_SPECKLE_APP_SECRET;
 //console.log(REACT_APP_SPECKLE_APP_NAME);
@@ -29,9 +32,13 @@ export function goToSpeckleAuthPage() {
 
 // Log out the current user. This removes the token/refreshToken pair.
 export function speckleLogOut() {
-  // Remove both token and refreshToken from localStorage
+  // Remove both token, refreshToken, selected stream, commit, and model ids from localStorage
+  localStorage.removeItem(CHALLENGE);
   localStorage.removeItem(TOKEN);
   localStorage.removeItem(REFRESH_TOKEN);
+  localStorage.removeItem(STREAM_ID);
+  localStorage.removeItem(COMMIT_ID);
+  localStorage.removeItem(OBJECT_ID);
 }
 
 // Exchanges the provided access code with a token/refreshToken pair, and saves them to local storage.
@@ -126,6 +133,6 @@ export const getSelectedCommit = async (streamId, commitId) => {
 // Trial function to retrieve Speckle object - to delete later
 export const getSelectedObject = async (streamId, objectId) => {
   const res = await speckleFetch(commitObjectQueryTrial(streamId, objectId));
-  const commit = res.data.stream.commit;
-  return commit;
+  const object = res.data.stream;
+  return object;
 };

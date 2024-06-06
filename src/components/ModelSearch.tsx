@@ -3,6 +3,7 @@ import { searchStreams } from "../speckleUtils";
 import { DebounceInput } from "react-debounce-input";
 import { useActionContext } from "../contexts/ActionContext";
 import { useAuthActions } from "../hooks/useAuthActions";
+import { STREAM_ID, COMMIT_ID, OBJECT_ID } from "../speckleUtils";
 
 import { columns } from "../components/table-commit/Columns";
 import { DataTable } from "../components/table-commit/DataTable";
@@ -144,17 +145,35 @@ const ModelSearch = () => {
               size="sm"
               variant="select"
               disabled={!selectedCommit}
-              onClick={() => {
-                dispatch({ type: "SET_COMMITS", payload: null });
-                if (selectedCommit && selectedStream) {
-                  handleCommitSelection(selectedStream.id, selectedCommit.id);
+              onClick={async () => {
+                try {
+                  dispatch({ type: "SET_COMMITS", payload: null });
+                  if (selectedCommit && selectedStream) {
+                    await handleCommitSelection(
+                      selectedStream.id,
+                      selectedCommit.id,
+                    );
+                    localStorage.setItem(STREAM_ID, selectedStream.id);
+                    localStorage.setItem(COMMIT_ID, selectedCommit.id);
+                    localStorage.setItem(
+                      OBJECT_ID,
+                      selectedCommit.referencedObject,
+                    );
+                    toast({
+                      variant: "success",
+                      title: "Success!",
+                      description: "Speckle commit loaded successfully.",
+                    });
+                  }
+                } catch (error) {
                   toast({
-                    variant: "success",
-                    title: "Success!",
-                    description: "Speckle commit loaded successfully.",
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Failed to load the commit.",
                   });
+                } finally {
+                  setSelectedCommit(null);
                 }
-                setSelectedCommit(null);
               }}
             >
               Load
