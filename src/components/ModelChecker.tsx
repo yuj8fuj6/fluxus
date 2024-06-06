@@ -7,7 +7,6 @@ import { ObjectLayers } from "@speckle/viewer";
 
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 
 const ModelChecker = () => {
   const { state } = useActionContext();
@@ -30,9 +29,6 @@ const ModelChecker = () => {
     };
     initializeObject();
   }, []);
-
-  console.log(currentCommit?.createdAt);
-  console.log(model);
 
   return (
     <div className="absolute mt-8 ml-32 w-[20rem] h-3/4 z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4">

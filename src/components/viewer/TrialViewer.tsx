@@ -16,6 +16,14 @@ import {
   OBJECT_ID,
 } from "../../speckleUtils.js";
 
+// const eg_ifc_project = "98f92419a2";
+// const eg_ifc_project_commit = "c8957351b3";
+// const eg_object =
+//   "https://latest.speckle.dev/streams/c43ac05d04/objects/d807f3888a400dbd814529fafd8ccac0";
+
+const eg_object2 =
+  "https://app.speckle.systems/streams/09cc5b50c1/objects/9ff7fb45ae779765cbcbb69cb8bd58b6";
+
 function getToken() {
   let token = localStorage.getItem(TOKEN) ?? "";
   if (token === undefined) {
@@ -24,9 +32,15 @@ function getToken() {
   return token;
 }
 
-const ModelViewer = () => {
-  const streamId = localStorage.getItem(STREAM_ID);
-  const objectId = localStorage.getItem(OBJECT_ID);
+// async function getExampleProject() {
+//   const object_url = await getSpeckleCommit(
+//     eg_ifc_project,
+//     eg_ifc_project_commit,
+//   );
+//   return object_url;
+// }
+
+const TrialModelViewer = () => {
   useEffect(() => {
     const model_viewer = document.getElementById(
       "model-viewer",
@@ -39,13 +53,14 @@ const ModelViewer = () => {
       viewer.createExtension(CameraController);
       viewer.createExtension(SelectionExtension);
 
-      // Object
-      const object = `https://app.speckle.systems/streams/${streamId}/objects/${objectId}`;
+      // Load IFC Project (160 MB, takes time to load, and sometimes doesn't load)
+      //const project = await getExampleProject();
+      //const loader = new SpeckleLoader(viewer.getWorldTree(), project, token);
 
       // Load Object
       const loader = new SpeckleLoader(
         viewer.getWorldTree(),
-        object,
+        eg_object2,
         token,
       );
       await viewer.loadObject(loader, true);
@@ -102,4 +117,4 @@ const ModelViewer = () => {
   );
 };
 
-export default ModelViewer;
+export default TrialModelViewer;
