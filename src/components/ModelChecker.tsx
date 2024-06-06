@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useActionContext } from "../contexts/ActionContext";
 import { useAuthActions } from "../hooks/useAuthActions";
 import { STREAM_ID, COMMIT_ID, OBJECT_ID } from "../speckleUtils";
-import { Building, Building2 } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { ObjectLayers } from "@speckle/viewer";
+
+import { Separator } from "./ui/separator";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const ModelChecker = () => {
   const { state } = useActionContext();
@@ -14,6 +18,7 @@ const ModelChecker = () => {
   const objectId = localStorage.getItem(OBJECT_ID);
 
   const [model, setModel] = useState<any>();
+  const [file, setFile] = useState<File>();
 
   useEffect(() => {
     const initializeObject = async () => {
@@ -35,31 +40,55 @@ const ModelChecker = () => {
         IFC-SG Checker
       </div>
       {model ? (
-        <div className="grid grid-cols-2 gap-y-2 text-sm">
-          <div className="col-span-1 text-[#C71585] flex justify-start font-semibold">
+        <div className="grid grid-cols-6 gap-y-2 text-sm">
+          <div className="col-span-3 text-[#C71585] flex justify-start font-semibold">
             Project:
           </div>
-          <div className="col-span-1 flex justify-end">{model.name}</div>
-          <div className="col-span-1 text-[#C71585] flex justify-start font-semibold">
+          <div className="col-span-3 flex justify-end">{model.name}</div>
+          <div className="col-span-3 text-[#C71585] flex justify-start font-semibold">
             Commit Branch:
           </div>
-          <div className="col-span-1 flex justify-end">
+          <div className="col-span-3 flex justify-end">
             {currentCommit?.branchName}
           </div>
-          <div className="col-span-1 text-[#C71585] flex justify-start font-semibold">
+          <div className="col-span-3 text-[#C71585] flex justify-start font-semibold">
             Model Type:
           </div>
-          <div className="col-span-1 flex justify-end">
+          <div className="col-span-3 flex justify-end">
             {currentCommit?.sourceApplication}
           </div>
-          <div className="col-span-1 text-[#C71585] flex justify-start font-semibold">
+          <div className="col-span-3 text-[#C71585] flex justify-start font-semibold">
             Created At:
           </div>
-          <div className="col-span-1 flex justify-end">
+          <div className="col-span-3 flex justify-end">
             {currentCommit?.createdAt
               ? new Date(currentCommit?.createdAt).toLocaleDateString("en-US")
               : "Invalid date"}
           </div>
+          <div className="col-span-2 text-[#C71585] flex justify-start font-semibold">
+            Upload File:
+          </div>
+          <div className="col-span-4">
+            <input
+              type="file"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setFile(e.target.files[0]);
+                  console.log(file);
+                }
+              }}
+              className="cursor-pointer file:border file:border-black file:text-x file:bg-white file:text-black file:rounded-lg"
+            />
+          </div>
+          <Button
+            size="sm"
+            variant="select"
+            className="col-span-2 text-xs"
+            disabled={!file}
+          >
+            Check Model
+          </Button>
+          <Separator className="col-span-6" />
         </div>
       ) : (
         <div className="text-gray-200 flex flex-col items-center gap-y-8 mt-40">
