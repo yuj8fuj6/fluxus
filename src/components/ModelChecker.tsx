@@ -15,6 +15,23 @@ import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { DataTable } from "../components/table-commit/DataTable";
 import { useToast } from "../components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "../components/ui/dialog";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+
+interface FilterState {
+  name: string;
+  category: string;
+}
 
 const ModelChecker = () => {
   const { state } = useActionContext();
@@ -23,12 +40,17 @@ const ModelChecker = () => {
   const [model, setModel] = useState<any>();
   const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
+  // TODO: Reminder to change this to false when done with this component
   const [checkModel, setCheckModel] = useState<boolean>(true);
   const [showCompliantDropdown, setShowCompliantDropdown] =
     useState<boolean>(false);
   const [showNonCompliantDropdown, setShowNonCompliantDropdown] =
     useState<boolean>(false);
   const [showIssueDropdown, setShowIssueDropdown] = useState<boolean>(false);
+  const [filters, setFilters] = useState<FilterState>({
+    name: "",
+    category: "",
+  });
 
   const commitId = localStorage.getItem(COMMIT_ID);
   const streamId = localStorage.getItem(STREAM_ID);
@@ -44,6 +66,16 @@ const ModelChecker = () => {
     };
     initializeObject();
   }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveFilters = () => {
+    console.log("Filters:", filters);
+    // Additional logic to handle the saved data
+  };
 
   return (
     <div className="absolute mt-8 ml-32 w-[20rem] max-h-[800px] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4">
@@ -124,22 +156,68 @@ const ModelChecker = () => {
                 Validator Results:
               </div>
               <div className="col-span-6 grid grid-cols-3 gap-x-3 text-[#C71585] ">
-                <Button
-                  size="sm"
-                  variant="outlined"
-                  className="text-xs"
-                  onClick={() => {}}
-                >
-                  Filter <Filter size={15} className="ml-3" />
-                </Button>
-                <Button
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm" variant="outlined" className="text-xs">
+                      Filter <Filter size={15} className="ml-3" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Filter Results</DialogTitle>
+                      <DialogDescription>
+                        Filter the validator results by the following
+                        selections.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                          Search by Name
+                        </Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          value={filters.name}
+                          onChange={handleInputChange}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                          Search by Category
+                        </Label>
+                        <Input
+                          id="category"
+                          name="category"
+                          value={filters.category}
+                          onChange={handleInputChange}
+                          className="col-span-3"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button
+                          type="submit"
+                          variant="select"
+                          onClick={handleSaveFilters}
+                        >
+                          Save filters
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+
+                {/* <Button
                   size="sm"
                   variant="outlined"
                   className="text-xs"
                   onClick={() => {}}
                 >
                   Sort <ChevronDown size={15} className="ml-3" />
-                </Button>
+                </Button> */}
                 <Button
                   size="sm"
                   variant="outlined"
