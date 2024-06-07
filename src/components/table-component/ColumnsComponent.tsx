@@ -12,6 +12,7 @@ interface Component {
   property_name: string;
   property_type: string;
   ifc_material_set: string;
+  compliance_status: string;
 }
 
 export const columns: ColumnDef<Component>[] = [
@@ -44,3 +45,5 @@ export const columns: ColumnDef<Component>[] = [
     header: "Created At",
   },
 ];
+
+

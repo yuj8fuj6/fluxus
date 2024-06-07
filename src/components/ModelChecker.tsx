@@ -33,6 +33,13 @@ interface FilterState {
   category: string;
 }
 
+// TODO: to change the structure of the object once determined
+// interface Component {
+//   id: string;
+//   speckle_type: string;
+//   ifc_type: string;
+// }
+
 const ModelChecker = () => {
   const { state } = useActionContext();
   const { currentCommit } = state;
@@ -51,7 +58,9 @@ const ModelChecker = () => {
     name: "",
     category: "",
   });
+  const [selectedObject, setSelectedObject] = useState<any>(null);
   // TODO: To create a state containing all the objects of the model.
+  const [modelObjects, setModelObjects] = useState<any>();
 
   const commitId = localStorage.getItem(COMMIT_ID);
   const streamId = localStorage.getItem(STREAM_ID);
@@ -63,6 +72,7 @@ const ModelChecker = () => {
         await handleCommitSelection(streamId, commitId);
         const object = await fetchObject(streamId, objectId);
         setModel(object);
+        setModelObjects(object.object.children.objects);
       }
     };
     initializeObject();
@@ -73,13 +83,46 @@ const ModelChecker = () => {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  // TODO: once category and names are determind
+  // TODO: once category and names are determined
   const handleSaveFilters = () => {
     console.log("Filters:", filters);
     // Additional logic to handle the saved data
   };
 
-  console.log(model)
+  // TODO: Sample data to be deleted later.
+  const sampleData: any = {
+    "001a2a6e44d6043e380197c9c315bdc4": {
+      "WorkingLoad_DA1-1": { is_pass: false, reason: { type: "NOPSET" } },
+      "WorkingLoad_DA1-2": { is_pass: false, reason: { type: "NOPSET" } },
+    },
+    "001f57017bc0531a276ed51b20834d18": {
+      "WorkingLoad_DA1-1": { is_pass: true, reason: null },
+      "WorkingLoad_DA1-2": { is_pass: true, reason: null },
+    },
+    "0027a6db0494de8c841cfc40ce3069ab": {
+      "WorkingLoad_DA1-1": { is_pass: false, reason: { type: "NOPSET" } },
+      "WorkingLoad_DA1-2": { is_pass: false, reason: { type: "NOPSET" } },
+    },
+  };
+
+  // TODO: To correct if necessary
+  const handleObjectSelection = (object: any) => {
+    if (sampleData) {
+      const selectedKeys = Object.keys(sampleData).filter(
+        (key) => key === object.id,
+      );
+      const selectedPSet = selectedKeys.map((key) => sampleData[key]);
+      setSelectedObject({
+        id: object.id,
+        name: object.speckle_type,
+        speckle_type: object.speckle_type,
+        ifc_type: object.speckle_type,
+        property_set: selectedPSet,
+      });
+    }
+  };
+
+  // console.log(modelObjects)
 
   return (
     <div className="absolute mt-8 ml-32 w-[20rem] max-h-[800px] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4">
@@ -113,7 +156,7 @@ const ModelChecker = () => {
               : "Invalid date"}
           </div>
           <div className="col-span-2 text-[#C71585] flex justify-start font-semibold">
-            Upload File:
+            Upload IDS:
           </div>
           <div className="col-span-4">
             <input
@@ -241,7 +284,8 @@ const ModelChecker = () => {
               >
                 Non-Compliant{" "}
                 <div className="flex">
-                  5000 items
+                  {/*TODO: To update the number of items in the list for all categories. */}
+                  {modelObjects.length} items
                   {showNonCompliantDropdown ? (
                     <ChevronUp className="ml-2" />
                   ) : (
@@ -251,10 +295,18 @@ const ModelChecker = () => {
               </button>
               {showNonCompliantDropdown && (
                 <div className="absolute z-10 w-72 bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
+                  {/*TODO: To update the arrays for the list for all categories. */}
                   <ul>
-                    {Array.from({ length: 10 }).map((_, index) => (
-                      <li key={index} className="p-2 hover:bg-gray-100">
-                        Item {index + 1}
+                    {modelObjects.map((object: any) => (
+                      <li
+                        key={object.data.id}
+                        className="m-2 p-2 hover:bg-red-100 flex flex-col text-sm items-start border rounded"
+                        onClick={() => handleObjectSelection(object.data)}
+                      >
+                        {object.data.speckle_type}
+                        <span className="text-[10px]">
+                          id: {object.data.id}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -267,7 +319,8 @@ const ModelChecker = () => {
               >
                 Possible Issue{" "}
                 <div className="flex">
-                  5000 items{" "}
+                  {/*TODO: To update the number of items in the list for all categories. */}
+                  {modelObjects.length} items
                   {showIssueDropdown ? (
                     <ChevronUp className="ml-2" />
                   ) : (
@@ -277,10 +330,17 @@ const ModelChecker = () => {
               </button>
               {showIssueDropdown && (
                 <div className="absolute z-10 w-72 bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
+                  {/*TODO: To update the arrays for the list for all categories. */}
                   <ul>
-                    {Array.from({ length: 10 }).map((_, index) => (
-                      <li key={index} className="p-2 hover:bg-gray-100">
-                        Item {index + 1}
+                    {modelObjects.map((object: any) => (
+                      <li
+                        key={object.data.id}
+                        className="m-2 p-2 hover:bg-orange-100 flex flex-col text-sm items-start border rounded"
+                      >
+                        {object.data.speckle_type}
+                        <span className="text-[10px]">
+                          id: {object.data.id}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -293,7 +353,8 @@ const ModelChecker = () => {
               >
                 Compliant{" "}
                 <div className="flex">
-                  5000 items{" "}
+                  {/*TODO: To update the number of items in the list for all categories. */}
+                  {modelObjects.length} items
                   {showCompliantDropdown ? (
                     <ChevronUp className="ml-2" />
                   ) : (
@@ -303,10 +364,17 @@ const ModelChecker = () => {
               </button>
               {showCompliantDropdown && (
                 <div className="absolute z-10 w-72 bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
+                  {/*TODO: To update the arrays for the list for all categories. */}
                   <ul>
-                    {Array.from({ length: 10 }).map((_, index) => (
-                      <li key={index} className="p-2 hover:bg-gray-100">
-                        Item {index + 1}
+                    {modelObjects.map((object: any) => (
+                      <li
+                        key={object.data.id}
+                        className="m-2 p-2 hover:bg-green-100 flex flex-col text-sm items-start border rounded"
+                      >
+                        {object.data.speckle_type}
+                        <span className="text-[10px]">
+                          id: {object.data.id}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -320,7 +388,7 @@ const ModelChecker = () => {
           )}
         </div>
       ) : (
-        <div className="text-gray-200 flex flex-col items-center gap-y-8 mt-40">
+        <div className="text-gray-200 flex flex-col items-center gap-y-8 mt-10">
           <Building2 size={150} strokeWidth={1} />
           <div className="italic font-semibold">
             No model loaded.
@@ -328,7 +396,7 @@ const ModelChecker = () => {
           </div>
         </div>
       )}
-      <ComponentDetail />
+      {model && <ComponentDetail />}
     </div>
   );
 };

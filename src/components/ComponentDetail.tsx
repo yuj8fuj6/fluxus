@@ -8,6 +8,14 @@ import { Button } from "./ui/button";
 import { useToast } from "../components/ui/use-toast";
 import { Input } from "../components/ui/input";
 
+
+// TODO: to change the structure of the object once determined
+interface Component {
+  id: string;
+  speckle_type: string;
+  ifc_type: string;
+}
+
 const ComponentDetail = () => {
   return (
     <div className="absolute ml-[352px] w-[30rem] max-h-[800px] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4">
