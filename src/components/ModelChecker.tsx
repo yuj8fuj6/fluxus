@@ -10,10 +10,10 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { ObjectLayers } from "@speckle/viewer";
+import ComponentDetail from "./ComponentDetail";
 
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { DataTable } from "../components/table-commit/DataTable";
 import { useToast } from "../components/ui/use-toast";
 import {
   Dialog,
@@ -51,6 +51,7 @@ const ModelChecker = () => {
     name: "",
     category: "",
   });
+  // TODO: To create a state containing all the objects of the model.
 
   const commitId = localStorage.getItem(COMMIT_ID);
   const streamId = localStorage.getItem(STREAM_ID);
@@ -72,10 +73,13 @@ const ModelChecker = () => {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
+  // TODO: once category and names are determind
   const handleSaveFilters = () => {
     console.log("Filters:", filters);
     // Additional logic to handle the saved data
   };
+
+  console.log(model)
 
   return (
     <div className="absolute mt-8 ml-32 w-[20rem] max-h-[800px] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4">
@@ -224,6 +228,7 @@ const ModelChecker = () => {
                   className="text-xs"
                   onClick={() => {}}
                 >
+                  {/*TODO: Once state containing array of checklist items is made*/}
                   Reset <RotateCcw size={15} className="ml-3" />
                 </Button>
               </div>
@@ -323,6 +328,7 @@ const ModelChecker = () => {
           </div>
         </div>
       )}
+      <ComponentDetail />
     </div>
   );
 };
