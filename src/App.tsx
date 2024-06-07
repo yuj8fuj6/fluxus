@@ -7,11 +7,13 @@ import ImportModel from "./pages/ImportModel";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import ActionProvider from "./contexts/ActionContext";
+import { Toaster } from "./components/ui/toaster";
 
 const App = () => {
   return (
     <div className="App">
       <ActionProvider>
+        <Toaster />
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/check" element={<Checker />} />

@@ -48,7 +48,7 @@ export const commitObjectQuery = (streamId, commitId) => `query{
     }
   }`;
 
-// Trial Selected Commit Query - to delete later 
+// Trial Selected Commit Query - to delete later
 export const streamCommitQuery = (streamId, commitId) => `query{
     stream(id: "${streamId}"){
       commit(id: "${commitId}"){
@@ -72,11 +72,10 @@ export const commitObjectQueryTrial = (streamId, objectId) => `query{
       id
       createdAt
       totalChildrenCount
-      children(limit:5){
+      children{
         cursor
         totalCount
         objects{
-          id
           data
         }
       }

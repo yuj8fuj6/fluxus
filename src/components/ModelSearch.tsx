@@ -3,10 +3,13 @@ import { searchStreams } from "../speckleUtils";
 import { DebounceInput } from "react-debounce-input";
 import { useActionContext } from "../contexts/ActionContext";
 import { useAuthActions } from "../hooks/useAuthActions";
+import { STREAM_ID, COMMIT_ID, OBJECT_ID } from "../speckleUtils";
+import { useNavigate } from "react-router-dom";
 
 import { columns } from "../components/table-commit/Columns";
 import { DataTable } from "../components/table-commit/DataTable";
 import { Button } from "./ui/button";
+import { useToast } from "../components/ui/use-toast";
 
 interface Stream {
   id: string;
@@ -33,6 +36,8 @@ const ModelSearch = () => {
   const { state, dispatch } = useActionContext();
   const { latestCommits, currentCommit } = state;
   const { handleStreamSelection, handleCommitSelection } = useAuthActions();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedStream) {
@@ -52,8 +57,6 @@ const ModelSearch = () => {
       handleStreamSelection(selectedStream);
     }
   }, [selectedStream]);
-
-  console.log(currentCommit);
 
   return (
     <div className="absolute mt-8 ml-32 w-[32rem] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4 text-[#C71585]">
@@ -142,14 +145,36 @@ const ModelSearch = () => {
               size="sm"
               variant="select"
               disabled={!selectedCommit}
-              onClick={() => {
-                dispatch({ type: "SET_COMMITS", payload: null });
-                if (selectedCommit && selectedStream)
-                  handleCommitSelection(
-                    selectedStream.id,
-                    selectedCommit.id,
-                  );
-                setSelectedCommit(null);
+              onClick={async () => {
+                try {
+                  dispatch({ type: "SET_COMMITS", payload: null });
+                  if (selectedCommit && selectedStream) {
+                    await handleCommitSelection(
+                      selectedStream.id,
+                      selectedCommit.id,
+                    );
+                    localStorage.setItem(STREAM_ID, selectedStream.id);
+                    localStorage.setItem(COMMIT_ID, selectedCommit.id);
+                    localStorage.setItem(
+                      OBJECT_ID,
+                      selectedCommit.referencedObject,
+                    );
+                    toast({
+                      variant: "success",
+                      title: "Success!",
+                      description: "Speckle commit loaded successfully.",
+                    });
+                    navigate("/check");
+                  }
+                } catch (error) {
+                  toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Failed to load the commit.",
+                  });
+                } finally {
+                  setSelectedCommit(null);
+                }
               }}
             >
               Load
