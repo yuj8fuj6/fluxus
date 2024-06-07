@@ -7,6 +7,8 @@ import { ObjectLayers } from "@speckle/viewer";
 
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
+import { DataTable } from "../components/table-commit/DataTable";
+import { useToast } from "../components/ui/use-toast";
 
 const ModelChecker = () => {
   const { state } = useActionContext();
@@ -17,7 +19,8 @@ const ModelChecker = () => {
   const objectId = localStorage.getItem(OBJECT_ID);
 
   const [model, setModel] = useState<any>();
-  const [file, setFile] = useState<File>();
+  const [file, setFile] = useState<File | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const initializeObject = async () => {
@@ -81,6 +84,23 @@ const ModelChecker = () => {
             variant="select"
             className="col-span-2 text-xs"
             disabled={!file}
+            onClick={async () => {
+              try {
+                toast({
+                  variant: "success",
+                  title: "Success!",
+                  description: "Speckle commit loaded successfully.",
+                });
+              } catch (error) {
+                toast({
+                  variant: "destructive",
+                  title: "Error",
+                  description: "Failed to load the commit.",
+                });
+              } finally {
+                setFile(null);
+              }
+            }}
           >
             Check Model
           </Button>
