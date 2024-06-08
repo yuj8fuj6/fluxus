@@ -17,7 +17,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/check" element={<Checker />} />
-          <Route path="/export-model" element={<ExportModel />} />
+          {/* <Route path="/export-model" element={<ExportModel />} /> */}
           <Route path="/import-model" element={<ImportModel />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -34,11 +34,13 @@ interface FilterState {
 }
 
 // TODO: to change the structure of the object once determined
-// interface Component {
-//   id: string;
-//   speckle_type: string;
-//   ifc_type: string;
-// }
+interface Component {
+  id: string;
+  name: string;
+  speckle_type: string;
+  ifc_type: string;
+  property_set: any;
+}
 
 const ModelChecker = () => {
   const { state } = useActionContext();
@@ -48,7 +50,7 @@ const ModelChecker = () => {
   const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
   // TODO: Reminder to change this to false when done with this component
-  const [checkModel, setCheckModel] = useState<boolean>(true);
+  const [checkModel, setCheckModel] = useState<boolean>(false);
   const [showCompliantDropdown, setShowCompliantDropdown] =
     useState<boolean>(false);
   const [showNonCompliantDropdown, setShowNonCompliantDropdown] =
@@ -58,9 +60,10 @@ const ModelChecker = () => {
     name: "",
     category: "",
   });
-  const [selectedObject, setSelectedObject] = useState<any>(null);
+  const [selectedObject, setSelectedObject] = useState<Component | null>(null);
   // TODO: To create a state containing all the objects of the model.
   const [modelObjects, setModelObjects] = useState<any>();
+  const [objectSelection, setObjectSelection] = useState<boolean>(false);
 
   const commitId = localStorage.getItem(COMMIT_ID);
   const streamId = localStorage.getItem(STREAM_ID);
@@ -92,16 +95,46 @@ const ModelChecker = () => {
   // TODO: Sample data to be deleted later.
   const sampleData: any = {
     "001a2a6e44d6043e380197c9c315bdc4": {
-      "WorkingLoad_DA1-1": { is_pass: false, reason: { type: "NOPSET" } },
-      "WorkingLoad_DA1-2": { is_pass: false, reason: { type: "NOPSET" } },
+      "WorkingLoad_DA1-1": {
+        is_pass: false,
+        reason: { type: "NOPSET" },
+        dataType: "IFCFORCEMEASURE",
+        value: null,
+      },
+      "WorkingLoad_DA1-2": {
+        is_pass: false,
+        reason: { type: "NOPSET" },
+        dataType: "IFCFORCEMEASURE",
+        value: null,
+      },
     },
     "001f57017bc0531a276ed51b20834d18": {
-      "WorkingLoad_DA1-1": { is_pass: true, reason: null },
-      "WorkingLoad_DA1-2": { is_pass: true, reason: null },
+      "WorkingLoad_DA1-1": {
+        is_pass: true,
+        reason: null,
+        dataType: "IFCFORCEMEASURE",
+        value: "20",
+      },
+      "WorkingLoad_DA1-2": {
+        is_pass: true,
+        reason: null,
+        dataType: "IFCFORCEMEASURE",
+        value: "20",
+      },
     },
     "0027a6db0494de8c841cfc40ce3069ab": {
-      "WorkingLoad_DA1-1": { is_pass: false, reason: { type: "NOPSET" } },
-      "WorkingLoad_DA1-2": { is_pass: false, reason: { type: "NOPSET" } },
+      "WorkingLoad_DA1-1": {
+        is_pass: false,
+        reason: { type: "NOPSET" },
+        dataType: "IFCFORCEMEASURE",
+        value: null,
+      },
+      "WorkingLoad_DA1-2": {
+        is_pass: false,
+        reason: { type: "NOPSET" },
+        dataType: "IFCFORCEMEASURE",
+        value: null,
+      },
     },
   };
 
@@ -112,11 +145,23 @@ const ModelChecker = () => {
         (key) => key === object.id,
       );
       const selectedPSet = selectedKeys.map((key) => sampleData[key]);
+      console.log(selectedPSet);
+      const properties = Object.keys(selectedPSet[0]).map((propKey) => {
+        const propData = selectedPSet[0][propKey];
+        return {
+          name: propKey,
+          is_pass: propData.is_pass,
+          reason: propData.reason.type,
+          dataType: propData.dataType,
+          value: propData.value,
+        };
+      });
+      console.log(properties);
       setSelectedObject({
         id: object.id,
-        name: object.speckle_type,
+        name: properties[0].dataType,
         speckle_type: object.speckle_type,
-        ifc_type: object.speckle_type,
+        ifc_type: properties[0].dataType,
         property_set: selectedPSet,
       });
     }
@@ -125,7 +170,7 @@ const ModelChecker = () => {
   // console.log(modelObjects)
 
   return (
-    <div className="absolute mt-8 ml-32 w-[20rem] max-h-[800px] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4">
+    <div className="absolute mt-8 ml-32 w-[24rem] max-h-[800px] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4">
       <div className="flex justify-start font-bold text-xl text-[#C71585]">
         IFC-SG Checker
       </div>
@@ -180,14 +225,14 @@ const ModelChecker = () => {
                 toast({
                   variant: "success",
                   title: "Success!",
-                  description: "Speckle commit loaded successfully.",
+                  description: "Model checked successfully.",
                 });
                 setCheckModel(true);
               } catch (error) {
                 toast({
                   variant: "destructive",
                   title: "Error",
-                  description: "Failed to load the commit.",
+                  description: "Failed to check the model.",
                 });
               } finally {
                 setFile(null);
@@ -294,14 +339,17 @@ const ModelChecker = () => {
                 </div>
               </button>
               {showNonCompliantDropdown && (
-                <div className="absolute z-10 w-72 bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
+                <div className="absolute z-10 w-[350px] bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
                   {/*TODO: To update the arrays for the list for all categories. */}
                   <ul>
                     {modelObjects.map((object: any) => (
                       <li
                         key={object.data.id}
                         className="m-2 p-2 hover:bg-red-100 flex flex-col text-sm items-start border rounded"
-                        onClick={() => handleObjectSelection(object.data)}
+                        onClick={() => {
+                          handleObjectSelection(object.data);
+                          setObjectSelection(true);
+                        }}
                       >
                         {object.data.speckle_type}
                         <span className="text-[10px]">
@@ -336,6 +384,10 @@ const ModelChecker = () => {
                       <li
                         key={object.data.id}
                         className="m-2 p-2 hover:bg-orange-100 flex flex-col text-sm items-start border rounded"
+                        onClick={() => {
+                          handleObjectSelection(object.data);
+                          setObjectSelection(true);
+                        }}
                       >
                         {object.data.speckle_type}
                         <span className="text-[10px]">
@@ -370,6 +422,10 @@ const ModelChecker = () => {
                       <li
                         key={object.data.id}
                         className="m-2 p-2 hover:bg-green-100 flex flex-col text-sm items-start border rounded"
+                        onClick={() => {
+                          handleObjectSelection(object.data);
+                          setObjectSelection(true);
+                        }}
                       >
                         {object.data.speckle_type}
                         <span className="text-[10px]">
@@ -396,7 +452,13 @@ const ModelChecker = () => {
           </div>
         </div>
       )}
-      {model && <ComponentDetail />}
+      {objectSelection && (
+        <ComponentDetail
+          selectedObject={selectedObject}
+          setSelectedObject={setSelectedObject}
+          setObjectSelection={setObjectSelection}
+        />
+      )}
     </div>
   );
 };
