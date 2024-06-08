@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useActionContext } from "../contexts/ActionContext";
 import { useAuthActions } from "../hooks/useAuthActions";
-import { STREAM_ID, COMMIT_ID, OBJECT_ID } from "../speckleUtils";
+import { SERVER_URL, STREAM_ID, COMMIT_ID, OBJECT_ID, TOKEN } from "../speckleUtils";
 import {
   Building2,
   Filter,
@@ -27,11 +27,17 @@ import {
 } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import axios from "axios";
+
+const FLUXUS_SERVER_URL = process.env.REACT_APP_FLUXUS_SERVER_URL as any;
+const FLUXUS_SERVER_VALIDATE = (FLUXUS_SERVER_URL 
+  + process.env.REACT_APP_FLUXUS_SERVER_VALIDATE) as string;
 
 interface FilterState {
   name: string;
   category: string;
 }
+
 
 // TODO: to change the structure of the object once determined
 // interface Component {
@@ -82,6 +88,37 @@ const ModelChecker = () => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
+  
+  /**
+   * Send jobs to fluxus-server service
+   */
+  async function sendValidationJob(){
+    if(!(file)){return;}
+    let ids = file;
+    let speckle = SERVER_URL;
+    let stream = streamId;
+    let obj = objectId;
+    let access_code = localStorage.getItem(TOKEN);
+    const form = new FormData();
+    console.log(file);
+    form.append('ids', file);
+    let config = {
+      url: FLUXUS_SERVER_VALIDATE
+      ,method: 'post'
+      ,params: {
+        speckle: speckle
+        ,stream: stream
+        ,obj: obj
+        ,access_code: access_code
+      }
+      ,data:form
+      ,headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    let res = await axios(config);
+    console.log(res);
+  }
 
   // TODO: once category and names are determined
   const handleSaveFilters = () => {
@@ -167,7 +204,7 @@ const ModelChecker = () => {
                   console.log(file);
                 }
               }}
-              className="cursor-pointer file:border file:border-black file:text-x file:bg-white file:text-black file:rounded-lg"
+              className="cursor-pointer file:border file:border-black file:text-x file:bg-white file:text-black file:rounded-lg overflow-hidden"
             />
           </div>
           <Button
@@ -177,6 +214,8 @@ const ModelChecker = () => {
             disabled={!file}
             onClick={async () => {
               try {
+                await sendValidationJob();
+                console.log(modelObjects);
                 toast({
                   variant: "success",
                   title: "Success!",
@@ -190,7 +229,7 @@ const ModelChecker = () => {
                   description: "Failed to load the commit.",
                 });
               } finally {
-                setFile(null);
+                //setFile(null);
               }
             }}
           >
