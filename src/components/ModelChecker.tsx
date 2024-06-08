@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { useActionContext } from "../contexts/ActionContext";
 import { useAuthActions } from "../hooks/useAuthActions";
 import { STREAM_ID, COMMIT_ID, OBJECT_ID } from "../speckleUtils";
@@ -9,7 +9,6 @@ import {
   RotateCcw,
   ChevronUp,
 } from "lucide-react";
-import { ObjectLayers } from "@speckle/viewer";
 import ComponentDetail from "./ComponentDetail";
 
 import { Separator } from "./ui/separator";
@@ -42,7 +41,15 @@ interface Component {
   property_set: any;
 }
 
-const ModelChecker = () => {
+interface ObjectSelectionProps {
+  setObjectSelection: Dispatch<SetStateAction<boolean>>;
+  objectSelection: boolean;
+}
+
+const ModelChecker: React.FC<ObjectSelectionProps> = ({
+  objectSelection,
+  setObjectSelection,
+}) => {
   const { state } = useActionContext();
   const { currentCommit } = state;
   const { handleCommitSelection, fetchObject } = useAuthActions();
@@ -63,7 +70,6 @@ const ModelChecker = () => {
   const [selectedObject, setSelectedObject] = useState<Component | null>(null);
   // TODO: To create a state containing all the objects of the model.
   const [modelObjects, setModelObjects] = useState<any>();
-  const [objectSelection, setObjectSelection] = useState<boolean>(false);
 
   const commitId = localStorage.getItem(COMMIT_ID);
   const streamId = localStorage.getItem(STREAM_ID);
@@ -349,6 +355,10 @@ const ModelChecker = () => {
                         onClick={() => {
                           handleObjectSelection(object.data);
                           setObjectSelection(true);
+                          localStorage.setItem(
+                            "fluxus.ComponentId",
+                            object.data.id,
+                          );
                         }}
                       >
                         {object.data.speckle_type}
@@ -387,6 +397,10 @@ const ModelChecker = () => {
                         onClick={() => {
                           handleObjectSelection(object.data);
                           setObjectSelection(true);
+                          localStorage.setItem(
+                            "fluxus.ComponentId",
+                            object.data.id,
+                          );
                         }}
                       >
                         {object.data.speckle_type}
@@ -425,6 +439,10 @@ const ModelChecker = () => {
                         onClick={() => {
                           handleObjectSelection(object.data);
                           setObjectSelection(true);
+                          localStorage.setItem(
+                            "fluxus.ComponentId",
+                            object.data.id,
+                          );
                         }}
                       >
                         {object.data.speckle_type}

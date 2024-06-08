@@ -39,6 +39,7 @@ export function speckleLogOut() {
   localStorage.removeItem(STREAM_ID);
   localStorage.removeItem(COMMIT_ID);
   localStorage.removeItem(OBJECT_ID);
+  localStorage.removeItem("fluxus.ComponentId");
 }
 
 // Exchanges the provided access code with a token/refreshToken pair, and saves them to local storage.

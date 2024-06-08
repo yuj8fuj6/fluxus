@@ -16,6 +16,7 @@ const Checker = () => {
   const { user } = state;
   const [token, setToken] = useState<string | null>();
   const [viewer, setViewer] = useState<React.ReactNode>(null);
+  const [objectSelection, setObjectSelection] = useState<boolean>(false);
   const queryParams = new URLSearchParams(location.search);
   const code = queryParams.get("access_code");
 
@@ -50,7 +51,16 @@ const Checker = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setViewer(streamId && objectId ? <ModelViewer /> : <TrialModelViewer />);
+      setViewer(
+        streamId && objectId ? (
+          <ModelViewer
+            objectSelection={objectSelection}
+            setObjectSelection={setObjectSelection}
+          />
+        ) : (
+          <TrialModelViewer />
+        ),
+      );
     }, 1000); // 1000 milliseconds delay
 
     return () => clearTimeout(timer); // Clean up the timer
@@ -60,7 +70,10 @@ const Checker = () => {
     <div className="relative w-full h-full overflow-auto">
       <Header name={user?.name} />
       <NavBar />
-      <ModelChecker />
+      <ModelChecker
+        setObjectSelection={setObjectSelection}
+        objectSelection={objectSelection}
+      />
       {viewer}
     </div>
   );

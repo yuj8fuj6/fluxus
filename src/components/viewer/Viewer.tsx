@@ -2,7 +2,7 @@
  * Viewer.tsx
  * - Speckle Viewer to load Speckle streams
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import {
   CameraController,
   SpeckleLoader,
@@ -13,6 +13,10 @@ import {
 } from "@speckle/viewer";
 import { TOKEN, STREAM_ID, OBJECT_ID } from "../../speckleUtils.js";
 
+interface ObjectSelectionProps {
+  setObjectSelection: Dispatch<SetStateAction<boolean>>;
+  objectSelection: boolean;
+}
 function getToken() {
   let token = localStorage.getItem(TOKEN) ?? "";
   if (token === undefined) {
@@ -21,13 +25,14 @@ function getToken() {
   return token;
 }
 
-const ModelViewer = () => {
+const ModelViewer: React.FC<ObjectSelectionProps> = ({
+  objectSelection,
+  setObjectSelection,
+}) => {
   const streamId = localStorage.getItem(STREAM_ID);
   const objectId = localStorage.getItem(OBJECT_ID);
+  const componentId = localStorage.getItem("fluxus.ComponentId");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  // Sample Object ID
-  const sampleObjectID = "001a2a6e44d6043e380197c9c315bdc4";
 
   useEffect(() => {
     const model_viewer = document.getElementById(
@@ -50,23 +55,45 @@ const ModelViewer = () => {
       await viewer.loadObject(loader, true);
 
       // Find and isolate the specific object
-      const meshNodes = viewer.getWorldTree().findAll((node: TreeNode) => {
-        if (!node.model.raw.speckle_type) return;
-        return node.model.raw.speckle_type.includes("Objects.Geometry.Mesh");
-      });
-      const filteringState = filterExtension.isolateObjects(
-        meshNodes.map((node: TreeNode) => sampleObjectID),
-      );
-      console.log(`Isolated objects: ${filteringState.isolatedObjects}`);
+      if (componentId) {
+        const meshNodes = viewer.getWorldTree().findAll((node: TreeNode) => {
+          if (!node.model.raw.speckle_type) return;
+          return node.model.raw.speckle_type.includes("Objects.Geometry.Mesh");
+        });
 
-      if (meshNodes.length > 0) {
-        filterExtension.setUserObjectColors([
-          {
-            objectIds: meshNodes.map((node: TreeNode) => node.model.id), // Ensure this uses `model.id`
-            color: "#C71585", // Example color
-          },
-        ]);
+        filterExtension.isolateObjects(
+          meshNodes.map((node: TreeNode) => node.model.id),
+        );
       }
+      // const meshNodes = viewer.getWorldTree().findAll((node: TreeNode) => {
+      //   if (!node.model.raw.speckle_type) return;
+      //   return node.model.raw.speckle_type.includes("Objects.Geometry.Mesh");
+      // });
+
+      // filterExtension.isolateObjects(
+      //   meshNodes.map((node: TreeNode) => node.model.id),
+      // );
+
+      // Doesn't work with isolation based on object ID
+      // if (componentId) {
+      //   const targetNode = viewer.getWorldTree().findId(componentId);
+      //   if (targetNode) {
+      //     filterExtension.isolateObjects([targetNode]);
+      //     console.log("Isolated object with ID:", componentId);
+      //   } else {
+      //     console.error("No object found with the specified component ID.");
+      //   }
+      // }
+
+      // Doesn't work for isolation with colour
+      // if (meshNodes.length > 0) {
+      //   filterExtension.setUserObjectColors([
+      //     {
+      //       objectIds: meshNodes.map((node: TreeNode) => node.model.id), // Ensure this uses `model.id`
+      //       color: "#C71585", // Example color
+      //     },
+      //   ]);
+      // }
 
       setIsLoading(false);
       if (spinner) {
@@ -76,7 +103,7 @@ const ModelViewer = () => {
       }
     }
     loadViewer();
-  }, []);
+  }, [componentId]);
 
   return (
     <>
