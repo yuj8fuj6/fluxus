@@ -377,7 +377,7 @@ const ModelChecker = () => {
                 </div>
               </button>
               {showIssueDropdown && (
-                <div className="absolute z-10 w-72 bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
+                <div className="absolute z-10 w-[350px] bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
                   {/*TODO: To update the arrays for the list for all categories. */}
                   <ul>
                     {modelObjects.map((object: any) => (
@@ -415,7 +415,7 @@ const ModelChecker = () => {
                 </div>
               </button>
               {showCompliantDropdown && (
-                <div className="absolute z-10 w-72 bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
+                <div className="absolute z-10 w-[350px] bg-white shadow-lg max-h-72 overflow-auto mt-1 animate-slideDown rounded-xl">
                   {/*TODO: To update the arrays for the list for all categories. */}
                   <ul>
                     {modelObjects.map((object: any) => (

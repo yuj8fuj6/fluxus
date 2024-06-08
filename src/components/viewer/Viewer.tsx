@@ -8,13 +8,10 @@ import {
   SpeckleLoader,
   Viewer,
   SelectionExtension,
+  FilteringExtension,
+  TreeNode,
 } from "@speckle/viewer";
-import {
-  getSpeckleCommit,
-  TOKEN,
-  STREAM_ID,
-  OBJECT_ID,
-} from "../../speckleUtils.js";
+import { TOKEN, STREAM_ID, OBJECT_ID } from "../../speckleUtils.js";
 
 function getToken() {
   let token = localStorage.getItem(TOKEN) ?? "";
@@ -29,6 +26,9 @@ const ModelViewer = () => {
   const objectId = localStorage.getItem(OBJECT_ID);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // Sample Object ID
+  const sampleObjectID = "001a2a6e44d6043e380197c9c315bdc4";
+
   useEffect(() => {
     const model_viewer = document.getElementById(
       "model-viewer",
@@ -40,15 +40,40 @@ const ModelViewer = () => {
       await viewer.init();
       viewer.createExtension(CameraController);
       viewer.createExtension(SelectionExtension);
+      const filterExtension = viewer.createExtension(FilteringExtension);
 
       // Object
-      const object = `https://app.speckle.systems/streams/${streamId}/objects/${objectId}`;
+      const objectUrl = `https://app.speckle.systems/streams/${streamId}/objects/${objectId}`;
 
       // Load Object
-      const loader = new SpeckleLoader(viewer.getWorldTree(), object, token);
+      const loader = new SpeckleLoader(viewer.getWorldTree(), objectUrl, token);
       await viewer.loadObject(loader, true);
+
+      // Find and isolate the specific object
+      const meshNodes = viewer.getWorldTree().findAll((node: TreeNode) => {
+        if (!node.model.raw.speckle_type) return;
+        return node.model.raw.speckle_type.includes("Objects.Geometry.Mesh");
+      });
+      const filteringState = filterExtension.isolateObjects(
+        meshNodes.map((node: TreeNode) => sampleObjectID),
+      );
+      console.log(`Isolated objects: ${filteringState.isolatedObjects}`);
+
+      if (meshNodes.length > 0) {
+        filterExtension.setUserObjectColors([
+          {
+            objectIds: meshNodes.map((node: TreeNode) => node.model.id), // Ensure this uses `model.id`
+            color: "#C71585", // Example color
+          },
+        ]);
+      }
+
       setIsLoading(false);
-      spinner.setAttribute("hidden", "");
+      if (spinner) {
+        spinner.setAttribute("hidden", "");
+      } else {
+        console.error("Spinner element not found");
+      }
     }
     loadViewer();
   }, []);
