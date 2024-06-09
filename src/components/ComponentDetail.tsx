@@ -205,7 +205,11 @@ const ComponentDetail: React.FC<ComponentProps> = ({
               <td className="w-1/6 align-middle">
                 {!item.value ? "Null" : item.value}
               </td>
-              <td className="w-1/6 align-middle">
+              <td
+                className={`w-1/6 align-middle font-bold ${
+                  item.compliance_status ? "text-green-500" : "text-red-500"
+                }`}
+              >
                 {item.compliance_status ? "PASS" : "FAIL"}
               </td>
               <td className="w-1/6 align-middle">{item.reason}</td>
