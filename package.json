@@ -25,7 +25,6 @@
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "fluxus": "link:",
     "lucide-react": "^0.379.0",
     "react": "^18.3.1",
     "react-debounce-input": "^3.3.0",
