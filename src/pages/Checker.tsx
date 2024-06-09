@@ -20,6 +20,8 @@ const Checker = () => {
   const queryParams = new URLSearchParams(location.search);
   const code = queryParams.get("access_code");
 
+  console.log(objectSelection)
+
   const streamId = localStorage.getItem(STREAM_ID);
   const objectId = localStorage.getItem(OBJECT_ID);
 

@@ -170,10 +170,12 @@ const ModelChecker: React.FC<ObjectSelectionProps> = ({
         ifc_type: properties[0].dataType,
         property_set: selectedPSet,
       });
+      setObjectSelection(true)
     }
   };
 
   // console.log(modelObjects)
+  // console.log(objectSelection)
 
   return (
     <div className="absolute mt-8 ml-32 w-[24rem] max-h-[800px] z-10 bg-white drop-shadow-lg rounded-lg grid grid-cols-1 content-start gap-y-4 p-4">
@@ -354,7 +356,6 @@ const ModelChecker: React.FC<ObjectSelectionProps> = ({
                         className="m-2 p-2 hover:bg-red-100 flex flex-col text-sm items-start border rounded"
                         onClick={() => {
                           handleObjectSelection(object.data);
-                          setObjectSelection(true);
                           localStorage.setItem(
                             "fluxus.ComponentId",
                             object.data.id,
@@ -396,7 +397,6 @@ const ModelChecker: React.FC<ObjectSelectionProps> = ({
                         className="m-2 p-2 hover:bg-orange-100 flex flex-col text-sm items-start border rounded"
                         onClick={() => {
                           handleObjectSelection(object.data);
-                          setObjectSelection(true);
                           localStorage.setItem(
                             "fluxus.ComponentId",
                             object.data.id,
@@ -438,7 +438,6 @@ const ModelChecker: React.FC<ObjectSelectionProps> = ({
                         className="m-2 p-2 hover:bg-green-100 flex flex-col text-sm items-start border rounded"
                         onClick={() => {
                           handleObjectSelection(object.data);
-                          setObjectSelection(true);
                           localStorage.setItem(
                             "fluxus.ComponentId",
                             object.data.id,
