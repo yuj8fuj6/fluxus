@@ -5,9 +5,11 @@ Fast IFC Checker + Composer
 - Please make sure your Speckle App allows the following permissions:
     - `streams:read`, `streams:write`, `profile:read`, `users:read`
 
-# Getting Started with Create React App
+# Usage 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This application is split into 2 main parts: 
+- Frontend - This repository - for the user interface.
+- Backend - fluxus-server - [https://github.com/boblyx/fluxus-server](https://github.com/boblyx/fluxus-server) - for the IDS validator and parameter update. 
 
 ## Available Scripts
 
