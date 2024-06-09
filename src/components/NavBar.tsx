@@ -12,7 +12,7 @@ import {
 const routes = [
   { icon: CloudDownload, label: "Import Model", route: "/import-model" },
   { icon: ListChecks, label: "Model Checker", route: "/check" },
-  { icon: Repeat, label: "Export Model", route: "/export-model" },
+  // { icon: Repeat, label: "Export Model", route: "/export-model" },
 ];
 
 const NavBar = () => {

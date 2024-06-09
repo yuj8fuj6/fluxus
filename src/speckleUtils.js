@@ -8,7 +8,7 @@ import {
 } from "./speckleQueries";
 
 export const APP_NAME = process.env.REACT_APP_SPECKLE_APP_NAME;
-export const SERVER_URL = process.env.REACT_APP_SPECKLE_SERVER_URL;
+export const SERVER_URL = `https://${process.env.REACT_APP_SPECKLE_SERVER_URL}`;
 export const TOKEN = `${APP_NAME}.AuthToken`;
 export const REFRESH_TOKEN = `${APP_NAME}.RefreshToken`;
 export const CHALLENGE = `${APP_NAME}.Challenge`;
@@ -39,6 +39,7 @@ export function speckleLogOut() {
   localStorage.removeItem(STREAM_ID);
   localStorage.removeItem(COMMIT_ID);
   localStorage.removeItem(OBJECT_ID);
+  localStorage.removeItem("fluxus.ComponentId");
 }
 
 // Exchanges the provided access code with a token/refreshToken pair, and saves them to local storage.

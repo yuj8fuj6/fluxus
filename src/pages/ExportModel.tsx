@@ -15,6 +15,7 @@ const ExportModel = () => {
   const { user } = state;
   const [token, setToken] = useState<string | null>();
   const [viewer, setViewer] = useState<React.ReactNode>(null);
+  const [objectSelection, setObjectSelection] = useState<boolean>(false);
 
   const streamId = localStorage.getItem(STREAM_ID);
   const objectId = localStorage.getItem(OBJECT_ID);
@@ -34,7 +35,16 @@ const ExportModel = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setViewer(streamId && objectId ? <ModelViewer /> : <TrialModelViewer />);
+      setViewer(
+        streamId && objectId ? (
+          <ModelViewer
+            objectSelection={objectSelection}
+            setObjectSelection={setObjectSelection}
+          />
+        ) : (
+          <TrialModelViewer />
+        ),
+      );
     }, 1000); // 1000 milliseconds delay
 
     return () => clearTimeout(timer); // Clean up the timer

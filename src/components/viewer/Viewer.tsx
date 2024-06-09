@@ -2,20 +2,27 @@
  * Viewer.tsx
  * - Speckle Viewer to load Speckle streams
  */
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useRef,
+} from "react";
 import {
   CameraController,
   SpeckleLoader,
   Viewer,
   SelectionExtension,
+  FilteringExtension,
+  TreeNode,
 } from "@speckle/viewer";
-import {
-  getSpeckleCommit,
-  TOKEN,
-  STREAM_ID,
-  OBJECT_ID,
-} from "../../speckleUtils.js";
+import { TOKEN, STREAM_ID, OBJECT_ID } from "../../speckleUtils.js";
 
+interface ObjectSelectionProps {
+  setObjectSelection: Dispatch<SetStateAction<boolean>>;
+  objectSelection: boolean;
+}
 function getToken() {
   let token = localStorage.getItem(TOKEN) ?? "";
   if (token === undefined) {
@@ -24,7 +31,10 @@ function getToken() {
   return token;
 }
 
-const ModelViewer = () => {
+const ModelViewer: React.FC<ObjectSelectionProps> = ({
+  objectSelection,
+  setObjectSelection,
+}) => {
   const streamId = localStorage.getItem(STREAM_ID);
   const objectId = localStorage.getItem(OBJECT_ID);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -35,23 +45,136 @@ const ModelViewer = () => {
     ) as HTMLDivElement;
     const spinner = document.getElementById("spinner") as HTMLDivElement;
     const token = getToken();
+    const componentId = localStorage.getItem("fluxus.ComponentId");
+
     async function loadViewer() {
       const viewer = new Viewer(model_viewer);
       await viewer.init();
       viewer.createExtension(CameraController);
       viewer.createExtension(SelectionExtension);
+      viewer.createExtension(FilteringExtension);
 
       // Object
-      const object = `https://app.speckle.systems/streams/${streamId}/objects/${objectId}`;
+      const objectUrl = `https://app.speckle.systems/streams/${streamId}/objects/${objectId}`;
 
       // Load Object
-      const loader = new SpeckleLoader(viewer.getWorldTree(), object, token);
+      const loader = new SpeckleLoader(viewer.getWorldTree(), objectUrl, token);
       await viewer.loadObject(loader, true);
+
+      // Find and isolate the specific object
+      if (componentId) {
+        // const meshNodes = viewer.getWorldTree().findAll((node: TreeNode) => {
+        //   if (!node.model.raw.speckle_type) return;
+        //   return node.model.raw.speckle_type.includes("Objects.Geometry.Mesh");
+        // });
+
+        viewer
+          .getExtension(FilteringExtension)
+          .isolateObjects([componentId], "plm");
+      }
+      // const meshNodes = viewer.getWorldTree().findAll((node: TreeNode) => {
+      //   if (!node.model.raw.speckle_type) return;
+      //   return node.model.raw.speckle_type.includes("Objects.Geometry.Mesh");
+      // });
+
+      // filterExtension.isolateObjects(
+      //   meshNodes.map((node: TreeNode) => node.model.id),
+      // );
+
+      // Doesn't work with isolation based on object ID
+      // if (componentId) {
+      //   const targetNode = viewer.getWorldTree().findId(componentId);
+      //   if (targetNode) {
+      //     filterExtension.isolateObjects([targetNode]);
+      //     console.log("Isolated object with ID:", componentId);
+      //   } else {
+      //     console.error("No object found with the specified component ID.");
+      //   }
+      // }
+
+      // Doesn't work for isolation with colour
+      // if (meshNodes.length > 0) {
+      //   filterExtension.setUserObjectColors([
+      //     {
+      //       objectIds: meshNodes.map((node: TreeNode) => node.model.id), // Ensure this uses `model.id`
+      //       color: "#C71585", // Example color
+      //     },
+      //   ]);
+      // }
+
       setIsLoading(false);
-      spinner.setAttribute("hidden", "");
+      if (spinner) {
+        spinner.setAttribute("hidden", "");
+      } else {
+        console.error("Spinner element not found");
+      }
     }
     loadViewer();
-  }, []);
+  }, [objectSelection, objectId]);
+
+  // useEffect(() => {
+  //   const modelViewer = document.getElementById("model-viewer") as HTMLElement;
+  //   const spinner = document.getElementById("spinner");
+  //   const token = getToken();
+
+  //   async function loadViewer() {
+  //     const newViewer = new Viewer(modelViewer);
+  //     await newViewer.init();
+  //     newViewer.createExtension(CameraController);
+  //     newViewer.createExtension(SelectionExtension);
+
+  //     const loader = new SpeckleLoader(
+  //       newViewer.getWorldTree(),
+  //       `https://app.speckle.systems/streams/${streamId}/objects/${objectId}`,
+  //       token,
+  //     );
+  //     await newViewer.loadObject(loader, true);
+
+  //     setIsLoading(false);
+  //     if (spinner) {
+  //       spinner.style.display = "none";
+  //     }
+
+  //     // Call color isolation function - with sample ID
+  //     await isolateColour("001a2a6e44d6043e380197c9c315bdc4", newViewer);
+  //   }
+
+  //   loadViewer();
+  // }, []);
+
+  // // Example isolateColour function adapted to be inside the component
+  // const isolateColour = async (selection: string, viewer: Viewer) => {
+  //   const renderer = viewer.getRenderer();
+  //   const rt = viewer.getWorldTree().getRenderTree();
+  //   const colourMaterial = {
+  //     id: "id",
+  //     color: "#ffffff",
+  //     opacity: 1,
+  //     metalness: 0,
+  //     roughness: 1,
+  //     vertexColors: false,
+  //   };
+  //   const ghostMaterial = {
+  //     id: "id",
+  //     color: "#aaaaaa",
+  //     opacity: 0.1,
+  //     metalness: 0,
+  //     roughness: 1,
+  //     vertexColors: false,
+  //   };
+  //   let material;
+  //   if (selection === componentId) {
+  //     material = colourMaterial;
+  //   } else {
+  //     material = ghostMaterial;
+  //   }
+  //   const rvs = rt.getRenderViewsForNodeId(selection);
+  //   if (rvs) {
+  //     // This checks if rvs is not null
+  //     renderer.setMaterial(rvs, material);
+  //   }
+  //   viewer.requestRender();
+  // };
 
   return (
     <>
